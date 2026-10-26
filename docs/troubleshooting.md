@@ -20,6 +20,8 @@ Start with `nanomuse doctor`: it prints the config file in use, the data directo
 
 **429 / rate limits.** Requests retry with exponential back-off (`max_retries`, default 5). Lower `agent.max_steps`, or add `web_fetch` to `always_ask_tools` to slow the loop down.
 
+**`web_fetch` and compressed pages.** The runtime decodes gzip responses once, then converts HTML to Markdown or pretty-prints JSON. Its 8 MiB body cap applies to decoded bytes; `max_chars` limits the rendered text further. Invalid gzip still returns `request failed` rather than treating the broken body as a page.
+
 **An approval card never appears in the terminal.** `nanomuse daemon` and `--auto` run in Sentinel `auto` mode by design. Use `nanomuse chat` or the app for interactive approvals.
 
 **"Sentinel blocked" for something you wanted.** Check `nanomuse audit -n 20` for the reason: a deny rule, `deny_tools`, or taint (private data read earlier in the conversation plus a new network destination). Add the host to `egress_allowlist` or approve once.

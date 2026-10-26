@@ -20,6 +20,8 @@
 
 **429 / 频率限制。** 请求会按指数退避重试（`max_retries`，默认 5）。调低 `agent.max_steps`，或者把 `web_fetch` 加进 `always_ask_tools` 让循环慢下来。
 
+**`web_fetch` 读取压缩页面。** 运行时只解压一次 gzip 响应，再把 HTML 转为 Markdown，或格式化 JSON。正文的 8 MiB 上限按解压后的字节计算，`max_chars` 会进一步限制转换后的文本。无效的 gzip 仍会返回 `request failed`，不会把损坏的正文当作页面读取。
+
 **终端里一直不出现审批卡片。** `nanomuse daemon` 和 `--auto` 按设计跑在哨兵（Sentinel）的 `auto` 模式下。要交互式审批，用 `nanomuse chat` 或者 App。
 
 **你想做的事被提示「Sentinel blocked」。** 查 `nanomuse audit -n 20` 看原因：一条拒绝规则、`deny_tools`，或者污染（这段对话早先读过私密数据，又出现了新的网络目的地）。把主机加进 `egress_allowlist`，或者允许一次。

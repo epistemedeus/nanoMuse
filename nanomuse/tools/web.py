@@ -100,8 +100,13 @@ async def fetch_public(
                 body = await read_capped(resp, MAX_BODY_BYTES)
             finally:
                 await resp.aclose()
+            # aiter_bytes() already decoded the body; its wire encoding and length no
+            # longer describe these bytes (which may also have been cut at the cap).
+            response_headers = resp.headers.copy()
+            response_headers.pop("content-encoding", None)
+            response_headers.pop("content-length", None)
             return httpx.Response(
-                resp.status_code, headers=resp.headers, content=body, request=resp.request
+                resp.status_code, headers=response_headers, content=body, request=resp.request
             )
         raise PermissionError(f"more than {MAX_REDIRECTS} redirects")
 
